@@ -1,0 +1,27 @@
+<?xml version="1.0" ?>
+            
+<project default="help">
+
+    <target name="help">
+        <echo>ant build       just build it, already!</echo>
+    </target>
+    
+    <target name="init">
+    </target>
+    
+    <target name='build'>
+        <mkdir dir="build"/>
+        <javac 
+            srcdir="src" 
+            classpath="lib/XMLLib.jar"
+            destdir="build"
+            >
+        </javac>
+    </target>
+    
+    <target name="clean">
+        <delete dir="build"/>
+    </target>
+    
+</project>
+
