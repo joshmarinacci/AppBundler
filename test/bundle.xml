@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<app name="SimpleTest">
+    <jar name="simpletest.jar" main-class="com.joshondesign.appbundler.simpletest.Main"/>
+    <jar name="XMLLib.jar"/>
+    <!--
+    <jar name="commons-codec-1.4.jar"/>
+    <jar name="apache-mime4j-0.6.jar"/>
+    <jar name="commons-logging-1.1.1.jar"/>
+    <jar name="httpclient-4.0.1.jar"/>
+    <jar name="httpcore-4.0.1.jar"/>
+    <jar name="httpcore-nio-4.0.1.jar"/>
+    <jar name="httpmime-4.0.1.jar"/>
+    <jar name="parboiled-0.9.7.3.jar"/>
+    -->
+</app>

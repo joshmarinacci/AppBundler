@@ -10,18 +10,46 @@
     </target>
     
     <target name='build'>
-        <mkdir dir="build"/>
+        <mkdir dir="build/classes"/>
         <javac 
             srcdir="src" 
             classpath="lib/XMLLib.jar"
-            destdir="build"
+            destdir="build/classes"
             >
         </javac>
     </target>
     
     <target name="clean">
         <delete dir="build"/>
+        <delete dir="dist"/>
     </target>
+    
+    <target name='build-testapp'>
+        <mkdir dir='build/testapp'/>
+        <javac 
+            srcdir='test/src'
+            destdir='build/testapp'
+            >
+        </javac>
+        <mkdir dir='build/jars'/>
+        <jar basedir="build/testapp" destfile="build/jars/simpletest.jar">
+        </jar>
+    </target>
+    
+    <target name="test-onejar" depends="build, build-testapp">
+        <mkdir dir='dist'/>
+        <mkdir dir='build/jars'/>
+        <java
+            classpath="build/classes;lib/XMLLib.jar"
+            classname="com.joshondesign.appbundler.Bundler" fork="true">
+            <arg value="--file=test/bundle.xml"/>
+            <arg value="--target=onejar"/>
+            <arg value="--outdir=dist/"/>
+            <arg value="--jardir=build/jars/"/>
+            <arg value="--jardir=lib/"/>
+        </java>
+    </target>
+    
     
 </project>
 
