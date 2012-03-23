@@ -56,10 +56,21 @@ public class Bundler {
         p("using target " + target);
         p("using dest_dir = " + DEST_DIR);
         p("using descriptor = " + DESCRIPTOR);
+        File descriptor = new File(DESCRIPTOR);
+        if(!descriptor.exists()) throw new Error("Descriptor file: " + DESCRIPTOR + " does not exist");
+        
+        runit(descriptor,jardirs, target, DEST_DIR, null);
+
+    }
+    
+    public static void runit(File descriptor, List<String> jardirs,
+            String target,
+            String DEST_DIR,
+            String codebase) throws Exception {
 
         //File keystore = new File("testkeystore");
         //load xml
-        AppDescription app = parseDescriptor(DESCRIPTOR);
+        AppDescription app = parseDescriptor(descriptor);
         //check xml
         verifyApp(app);
         //check support dirs
@@ -98,7 +109,6 @@ public class Bundler {
         }
         
         p("ERROR: unrecognized target: " + target);
-
     }
 
     private static void p(String[] args) {
@@ -107,9 +117,7 @@ public class Bundler {
         }
     }
 
-    private static AppDescription parseDescriptor(String DESCRIPTOR) throws Exception {
-        File descriptor = new File(DESCRIPTOR);
-        if(!descriptor.exists()) throw new Error("Descriptor file: " + DESCRIPTOR + " does not exist");
+    private static AppDescription parseDescriptor(File descriptor) throws Exception {
 
         AppDescription app = new AppDescription();
         Doc doc = XMLParser.parse(descriptor);

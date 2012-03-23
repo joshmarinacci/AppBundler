@@ -17,6 +17,13 @@
             destdir="build/classes"
             >
         </javac>
+        <copy todir='build/classes'>
+            <fileset dir='src'>
+                <include name='**/*.plist'/>
+                <include name='**/JavaApplicationStub'/>
+                <include name='**/*.txt'/>
+            </fileset>
+        </copy>
     </target>
     
     <target name="clean">
@@ -50,6 +57,18 @@
         </java>
     </target>
     
+    <target name='test-anttask' depends='build, build-testapp'>
+        <taskdef name='appbundler' 
+            classname='com.joshondesign.appbundler.BundlerTask'
+            classpath='build/classes;lib/XMLLib.jar'/>
+            
+        <appbundler
+            bundle="test/bundle.xml"
+            target="mac"
+            destdir="dist"
+            libdir="build/jars;lib"
+        />
+    </target>
     
 </project>
 
