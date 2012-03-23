@@ -6,12 +6,14 @@ and double clickable jars that work anywhere.
 
 To use AppBundler, create a bundle.xml in your project directory like this:
 
-<?xml version="1.0" encoding="UTF-8"?>
 <app name="SimpleTest">
     <jar name="simpletest.jar" 
         main-class="com.joshondesign.appbundler.simpletest.Main"/>
     <jar name="XMLLib.jar"/>
 </app>
+
+The bundle.xml lists the jars which make up your app. The jar with your main
+class must have a 'main-class' attribute.
 
 Now create an ant target in your build.xml that looks like this:
 
@@ -21,9 +23,16 @@ Now create an ant target in your build.xml that looks like this:
         classpath='build/classes;lib/XMLLib.jar'/>
         
     <appbundler
-        bundle="test/bundle.xml"
+        bundle="bundle.xml"
         target="mac"
         destdir="dist"
         libdir="build/jars;lib"
     />
 </target>
+
+That's it. Just run 'ant package-app' and a Mac bundle will appear in dist/mac.
+
+Valid targets are mac, win, jnlp, onejar, and all.
+
+'bundle', 'target', 'destdir', and 'libdir' must be set. 'libdir' is a semicolon
+separated list of directories which contain your jars.
