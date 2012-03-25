@@ -20,7 +20,7 @@ class must have a 'main-class' attribute.
 
 Now create an ant target in your build.xml that looks like this:
 
-```ant
+```xml
 <target name='package-app' depends='build'>
     <taskdef name='appbundler' 
         classname='com.joshondesign.appbundler.BundlerTask'
