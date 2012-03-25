@@ -7,7 +7,7 @@ and double clickable jars that work anywhere.
 
 To use AppBundler, create a bundle.xml in your project directory like this:
 
-```
+```xml
 <app name="SimpleTest">
     <jar name="simpletest.jar" 
         main-class="com.joshondesign.appbundler.simpletest.Main"/>
@@ -20,7 +20,7 @@ class must have a 'main-class' attribute.
 
 Now create an ant target in your build.xml that looks like this:
 
-```
+```ant
 <target name='package-app' depends='build'>
     <taskdef name='appbundler' 
         classname='com.joshondesign.appbundler.BundlerTask'
