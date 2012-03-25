@@ -1,17 +1,19 @@
-#### This is the read me 
+#### AppBundler
 
 
-AppBundler is an Ant task for packaging up Desktop Java apps as native
-executables.  It can package Mac OS X .app bundles, Windows EXEs, JNLPs,
+AppBundler is an Ant task for packaging up desktop Java apps as native
+executables.  It can package Mac OS X *.app* bundles, Windows EXEs, JNLPs,
 and double clickable jars that work anywhere.
 
 To use AppBundler, create a bundle.xml in your project directory like this:
 
+```
 <app name="SimpleTest">
     <jar name="simpletest.jar" 
         main-class="com.joshondesign.appbundler.simpletest.Main"/>
     <jar name="XMLLib.jar"/>
 </app>
+```
 
 The bundle.xml lists the jars which make up your app. The jar with your main
 class must have a 'main-class' attribute.
