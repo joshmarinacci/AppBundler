@@ -35,9 +35,11 @@ Now create an ant target in your build.xml that looks like this:
 </target>
 ```
 
-That's it. Just run 'ant package-app' and a Mac bundle will appear in dist/mac.
+That's it. Just run `ant package-app` and a Mac bundle will appear in dist/mac.
 
-Valid targets are `mac`, win, jnlp, onejar, and all.
+Valid targets are `mac`, `win`, `jnlp`, `onejar`, and `all`.
 
-'bundle', 'target', 'destdir', and 'libdir' must be set. 'libdir' is a semicolon
-separated list of directories which contain your jars.
+The attributes 'bundle', 'target', 'destdir', and 'libdir' must be set. 
+'libdir' is a semicolon separated list of directories which contain your jars.
+
+
