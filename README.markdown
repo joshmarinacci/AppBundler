@@ -2,7 +2,7 @@
 
 
 AppBundler is an Ant task for packaging up desktop Java apps as native
-executables.  It can package Mac OS X *.app* bundles, Windows EXEs, JNLPs,
+executables.  It can package Mac OS X .app bundles, Windows EXEs, JNLPs,
 and double clickable jars that work anywhere.
 
 To use AppBundler, create a bundle.xml in your project directory like this:
@@ -20,6 +20,7 @@ class must have a 'main-class' attribute.
 
 Now create an ant target in your build.xml that looks like this:
 
+```
 <target name='package-app' depends='build'>
     <taskdef name='appbundler' 
         classname='com.joshondesign.appbundler.BundlerTask'
@@ -32,10 +33,11 @@ Now create an ant target in your build.xml that looks like this:
         libdir="build/jars;lib"
     />
 </target>
+```
 
 That's it. Just run 'ant package-app' and a Mac bundle will appear in dist/mac.
 
-Valid targets are mac, win, jnlp, onejar, and all.
+Valid targets are `mac`, win, jnlp, onejar, and all.
 
 'bundle', 'target', 'destdir', and 'libdir' must be set. 'libdir' is a semicolon
 separated list of directories which contain your jars.
