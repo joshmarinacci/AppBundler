@@ -105,7 +105,7 @@ public class WebosBundler {
                     }
                 }
             }
-            for(File jar : lib.getJars()) {
+            for(File jar : lib.getCommonJars()) {
                 out.print(jar.getName()+":");
             }
         }
@@ -136,7 +136,7 @@ public class WebosBundler {
                     }
                 }
             }
-            for(File jar : lib.getJars()) {
+            for(File jar : lib.getCommonJars()) {
                 p("copying over native lib jar: " + jar.getName());
                 Util.copyToFile(jar, new File(appDir, jar.getName()));
             }

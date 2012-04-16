@@ -10,12 +10,11 @@ import com.joshondesign.appbundler.Jar;
 import com.joshondesign.appbundler.NativeLib;
 import com.joshondesign.appbundler.Util;
 import com.joshondesign.xml.XMLWriter;
-import java.io.BufferedOutputStream;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -116,7 +115,7 @@ public class WindowsBundler {
                     Util.copyToFile(file, destFile);
                 }
             }
-            for(File jar : lib.getJars()) {
+            for(File jar : lib.getCommonJars()) {
                 p("copying over native lib jar: " + jar.getName());
                 Util.copyToFile(jar, new File(javaDir, jar.getName()));
             }
@@ -138,7 +137,7 @@ public class WindowsBundler {
             xml.start("classPath").text("lib\\"+jar.getName()).end();
         }
         for(NativeLib lib : app.getNativeLibs()) {
-            for(File jar : lib.getJars()) {
+            for(File jar : lib.getCommonJars()) {
                 xml.start("classPath").text("lib\\"+jar.getName()).end();
             }
         }

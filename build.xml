@@ -25,6 +25,10 @@
             </fileset>
         </copy>
     </target>
+
+    <target name="jar">
+        <jar destfile="dist/AppBundler.jar" basedir="build/classes"/>
+    </target>
     
     <target name="clean">
         <delete dir="build"/>

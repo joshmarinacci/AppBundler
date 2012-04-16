@@ -22,10 +22,12 @@ import java.io.InputStream;
  * To change this template use File | Settings | File Templates.
  */
 public class MacBundler {
+    
+    private static final String OSNAME = "mac";
 
     public static void start(AppDescription app, String dest_dir) throws Exception {
         //create the dir structure
-        File destDir = new File(dest_dir+"/mac/");
+        File destDir = new File(dest_dir+"/"+OSNAME+"/");
         File appDir = new File(destDir,app.getName()+".app");
         appDir.mkdirs();
         p("app dir exists = " + appDir.exists());
@@ -40,10 +42,10 @@ public class MacBundler {
 
 
         for(Jar jar : app.getJars()) {
-            p("processing jar = " + jar.getName() + " os = "+jar.getOS());
+            //p("processing jar = " + jar.getName() + " os = "+jar.getOS());
             if(jar.isOSSpecified()) {
-                if(!jar.matchesOS("mac")) {
-                    p("   skipping jar");
+                if(!jar.matchesOS(OSNAME)) {
+                    p("   skipping jar " + jar.getName());
                     continue;
                 }
             }
@@ -109,13 +111,14 @@ public class MacBundler {
 
         // set the bundle bit
         try {
-            Runtime.getRuntime().exec("/Developer/Tools/SetFile -a B "+appDir);
+            //Runtime.getRuntime().exec("/Developer/Tools/SetFile -a B "+appDir);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
 
     private static void processInfoPlist(AppDescription app, File contentsDir) throws Exception {
+        p("Processing the info plist");
 
         XMLWriter out = new XMLWriter(new File(contentsDir,"Info.plist"));
         out.header();
@@ -175,7 +178,15 @@ public class MacBundler {
             out.start("string").text("$JAVAROOT/"+jar.getName()).end();
         }
         for(NativeLib lib : app.getNativeLibs()) {
-            for(File jar : lib.getJars()) {
+            p("native lib: " + lib.getName());
+            p("getting the common jars");
+            for(File jar : lib.getCommonJars()) {
+                p("adding native common jar to plist: " + jar.getName());
+                out.start("string").text("$JAVAROOT/"+jar.getName()).end();
+            }
+            p("getting the platform jars");
+            for(File jar : lib.getPlatformJars(OSNAME)) {
+                p("adding native only jar to plist: " + jar.getName());
                 out.start("string").text("$JAVAROOT/"+jar.getName()).end();
             }
         }
@@ -206,18 +217,24 @@ public class MacBundler {
     private static void processNatives(File javaDir, AppDescription app) throws IOException {
         //track the list of files in the appbundler_tasks.xml
         for(NativeLib lib : app.getNativeLibs()) {
-            p("sucking in native lib: " + lib);
+            p("=== sucking in native lib: " + lib.getName());
             for(File os : lib.getOSDirs()) {
-                p("os = " + os.getName());
-                for(File file : os.listFiles()) {
-                    p("   file = " + file.getName());
-                    File destFile = new File(javaDir, file.getName());
-                    p("copying to file: " + destFile);
-                    Util.copyToFile(file, destFile);
+                //p("os = " + os.getName());
+                if(OSNAME.equals(os.getName())) {
+                    for(File file : os.listFiles()) {
+                        //p("   file = " + file.getName());
+                        File destFile = new File(javaDir, file.getName());
+                        //p("copying to file: " + destFile);
+                        Util.copyToFile(file, destFile);
+                    }
                 }
             }
-            for(File jar : lib.getJars()) {
-                p("copying over native lib jar: " + jar.getName());
+            for(File jar : lib.getCommonJars()) {
+                p("copying over native common jar: " + jar.getName());
+                Util.copyToFile(jar, new File(javaDir, jar.getName()));
+            }
+            for(File jar : lib.getPlatformJars(OSNAME)) {
+                p("copying over native only jar: " + jar.getName());
                 Util.copyToFile(jar, new File(javaDir, jar.getName()));
             }
         }

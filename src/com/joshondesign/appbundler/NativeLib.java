@@ -54,11 +54,25 @@ public class NativeLib {
         return new File(baseDir,"native").listFiles();
     }
 
-    public Iterable<File> getJars() {
+    public Iterable<File> getCommonJars() {
         List<File> jars = new ArrayList<File>();
+        p("base dir = " + baseDir);
         for(File f : baseDir.listFiles()) {
             if(!f.isDirectory() && f.exists() && f.getName().endsWith(".jar")) {
                 jars.add(f);
+            }
+        }
+        return jars;
+    }
+    public Iterable<File> getPlatformJars(String osString) {
+        List<File> jars = new ArrayList<File>();
+        for(File osDir : getOSDirs()) {
+            if(osString.equals(osDir.getName())) {
+                for(File file : osDir.listFiles()) {
+                    if(file.getName().toLowerCase().endsWith(".jar")) {
+                        jars.add(file);
+                    }
+                }
             }
         }
         return jars;
