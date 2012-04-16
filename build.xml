@@ -15,6 +15,7 @@
             srcdir="src" 
             classpath="lib/XMLLib.jar"
             destdir="build/classes"
+            debug="true"
             >
         </javac>
         <copy todir='build/classes'>
@@ -22,6 +23,7 @@
                 <include name='**/*.plist'/>
                 <include name='**/JavaApplicationStub'/>
                 <include name='**/*.txt'/>
+                <include name='**/resources/**'/>
             </fileset>
         </copy>
     </target>

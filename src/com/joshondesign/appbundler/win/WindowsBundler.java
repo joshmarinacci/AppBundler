@@ -24,9 +24,11 @@ import java.util.Map;
  */
 public class WindowsBundler {
 
+    private static final String OSNAME = "win";
+
     public static void start(AppDescription app, String DEST_DIR) throws FileNotFoundException, Exception {
         //create the 'win' directory
-        File destDir = new File(DEST_DIR+"/win/");
+        File destDir = new File(DEST_DIR+"/"+OSNAME+"/");
         destDir.mkdirs();
 
         String exeName = app.getName() +".exe";
@@ -89,7 +91,7 @@ public class WindowsBundler {
         for(Jar jar : app.getJars()) {
             p("processing jar = " + jar.getName() + " os = "+jar.getOS());
             if(jar.isOSSpecified()) {
-                if(!jar.matchesOS("win")) {
+                if(!jar.matchesOS(OSNAME)) {
                     p("   skipping jar");
                     continue;
                 }
@@ -103,20 +105,23 @@ public class WindowsBundler {
     }
     private static void processNatives(File javaDir, AppDescription app) throws IOException {
         //track the list of files in the appbundler_tasks.xml
-        byte[] buf = new byte[4096];
         for(NativeLib lib : app.getNativeLibs()) {
             p("sucking in native lib: " + lib);
             for(File os : lib.getOSDirs()) {
                 p("os = " + os.getName());
-                for(File file : os.listFiles()) {
-                    p("   file = " + file.getName());
-                    File destFile = new File(javaDir, file.getName());
-                    p("copying to file: " + destFile);
-                    Util.copyToFile(file, destFile);
+                if(OSNAME.equals(os.getName())) {
+                    for(File file : os.listFiles()) {
+                        File destFile = new File(javaDir, file.getName());
+                        Util.copyToFile(file, destFile);
+                    }
                 }
             }
             for(File jar : lib.getCommonJars()) {
-                p("copying over native lib jar: " + jar.getName());
+                p("copying over native common jar: " + jar.getName());
+                Util.copyToFile(jar, new File(javaDir, jar.getName()));
+            }
+            for(File jar : lib.getPlatformJars(OSNAME)) {
+                p("copying over native only jar: " + jar.getName());
                 Util.copyToFile(jar, new File(javaDir, jar.getName()));
             }
         }
@@ -138,6 +143,9 @@ public class WindowsBundler {
         }
         for(NativeLib lib : app.getNativeLibs()) {
             for(File jar : lib.getCommonJars()) {
+                xml.start("classPath").text("lib\\"+jar.getName()).end();
+            }
+            for(File jar : lib.getPlatformJars(OSNAME)) {
                 xml.start("classPath").text("lib\\"+jar.getName()).end();
             }
         }
