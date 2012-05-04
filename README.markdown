@@ -5,6 +5,9 @@ AppBundler is an Ant task for packaging up desktop Java apps as native
 executables.  It can package Mac OS X .app bundles, Windows EXEs, JNLPs,
 and double clickable jars that work anywhere.
 
+The Basics
+----------
+
 To use AppBundler, create a bundle.xml in your project directory like this:
 
 ```xml
@@ -42,13 +45,17 @@ Valid targets are `mac`, `win`, `jnlp`, `onejar`, and `all`.
 The attributes 'bundle', 'target', 'destdir', and 'libdir' must be set. 
 'libdir' is a semicolon separated list of directories which contain your jars.
 
+
+Native Libraries
+----------------
+
 To use native libraries like JavaFX or Jogl you must put the jars and native 
 libs in a specific structure. Create a directory in your lib directory with
 the name of your lib. Under that put a directory called 'native' and under that
 put a dir each for mac, win, and linux.  Put the shared jars in the named lib dir.
 Put the native libraries and platform specific jars in the os specific dir. 
 
-For example, for JavaFX I created this directory structure:
+For example, for JavaFX support in LeoSketch I created this directory structure:
 ```
 lib
     javafx
