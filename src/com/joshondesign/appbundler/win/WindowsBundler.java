@@ -5,16 +5,15 @@
 
 package com.joshondesign.appbundler.win;
 
-import com.joshondesign.appbundler.AppDescription;
-import com.joshondesign.appbundler.Jar;
-import com.joshondesign.appbundler.NativeLib;
-import com.joshondesign.appbundler.Util;
+import com.joshondesign.appbundler.*;
 import com.joshondesign.xml.XMLWriter;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -42,7 +41,7 @@ public class WindowsBundler {
         if(!tempdir.canWrite()) {
             throw new Exception("can't write to tempdir! " + tempdir.getAbsolutePath());
         }
-        
+
         //generate a project file in tempdir
         File projectFile = new File(tempdir, "app.jsmooth");
         p("generating project file: " + projectFile.getAbsolutePath());
@@ -55,8 +54,11 @@ public class WindowsBundler {
         Util.copyToFile(WindowsBundler.class.getResource("resources/jsmoothgen.jar"),smoothGenJar);
         File jox116Jar = new File(tempdir,"jox116.jar");
         Util.copyToFile(WindowsBundler.class.getResource("resources/jox116.jar"),jox116Jar);
+        // JRE dll's - see http://www.duckware.com/tech/java6msvcr71.html
         File msvcr71DLL = new File(tempdir,"msvcr71.dll");
         Util.copyToFile(WindowsBundler.class.getResource("resources/msvcr71.dll"),msvcr71DLL);
+        File msvcr100DLL = new File(tempdir,"msvcr100.dll");  //Java 7 or higher
+        Util.copyToFile(WindowsBundler.class.getResource("resources/msvcr100.dll"),msvcr100DLL);
 
         //extract skeletons for jsmooth to tempdir
         File wrapperDir = new File(tempdir,"skeletons/autodownload-wrapper");
@@ -68,6 +70,17 @@ public class WindowsBundler {
                 new File(wrapperDir,"autodownload.skel"));
         Util.copyToFile(WindowsBundler.class.getResource("resources/skeletons/autodownload-wrapper/customdownload.skel"),
                 new File(wrapperDir,"customdownload.skel"));
+
+        // copy app icon to tempdir
+        for(String iconS : app.getAppIcons()) {
+            if(iconS.toLowerCase().endsWith(".ico")) {
+                p("Using icon: " + iconS);
+                File icon = new File(iconS);
+                File outIcon = new File(tempdir,"icon.ico");
+                p("out icon = " + outIcon.getAbsolutePath());
+                Bundler.copyStream(new FileInputStream(icon),new FileOutputStream(outIcon));
+            }
+        }
 
         //invoke jsmooth in a temp dir
         String[]command = new String[]{
@@ -84,10 +97,13 @@ public class WindowsBundler {
         File exeFile = new File(tempdir,exeName);
         Util.copyToFile(exeFile, new File(destDir,exeName));
         Util.copyToFile(msvcr71DLL, new File(destDir,"msvcr71.dll"));
-        
+        Util.copyToFile(msvcr100DLL, new File(destDir,"msvcr100.dll"));
+
         //copy jars to output dir
         File libDir = new File(destDir,"lib");
+        File depDir = new File(libDir,"lib");
         libDir.mkdir();
+        depDir.mkdir();
         for(Jar jar : app.getJars()) {
             p("processing jar = " + jar.getName() + " os = "+jar.getOS());
             if(jar.isOSSpecified()) {
@@ -96,7 +112,13 @@ public class WindowsBundler {
                     continue;
                 }
             }
-            File jarFile = new File(libDir,jar.getName());
+
+            File jarFile;
+            if(jar.isMain()){
+              jarFile = new File(libDir,jar.getName());
+            } else {
+              jarFile = new File(depDir,jar.getName());
+            }
             Util.copyToFile(jar.getFile(), jarFile);
         }
 
@@ -130,6 +152,7 @@ public class WindowsBundler {
     private static void generateProjectFile(XMLWriter xml, AppDescription app) throws Exception {
         xml.header();
         xml.start("jsmoothproject");
+        xml.start("iconLocation").text("./icon.ico").end();
         xml.start("JVMSearchPath").text("registry").end();
         xml.start("JVMSearchPath").text("javahome").end();
         xml.start("JVMSearchPath").text("jrepath").end();
@@ -152,11 +175,16 @@ public class WindowsBundler {
         xml.start("embeddedJar").text("false").end();
         xml.start("executableName").text(app.getName()+".exe").end();
 
-
         xml.start("javaProperties")
                 .start("name").text("java.library.path").end()
-                .start("value").text("./lib").end()
-                .end();
+                .start("value").text("./lib").end().end();
+        
+        for(Prop prop : app.getProps()) {
+            xml.start("javaProperties").
+                    start("name").text(prop.getName()).end().start("value").text(prop.getValue()).end().
+                    end();
+        }
+
 
         //<initialMemoryHeap>-1</initialMemoryHeap>
         xml.start("initialMemoryHeap").text("-1").end();

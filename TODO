@@ -1,0 +1,32 @@
+=== TO-DO ===
+
+== Windows ==
+
+[] Link with an InnoSetup installer
+  http://www.jrsoftware.org/isinfo.php
+
+[] Switch to a more modern and maintained packager such as Launch4J (which BTW allows setting splash images)
+
+== OS X ==
+
+[] Generate a DMG or PKG. For that we need to run on a Mac and execute a script
+   http://stackoverflow.com/questions/96882/how-do-i-create-a-nice-looking-dmg-for-mac-os-x-using-command-line-tools
+   http://www.osxgnu.org/info/osxpackages.html
+
+[] More OS X properties
+   http://developer.apple.com/library/mac/#documentation/Java/Reference/Java_InfoplistRef/Articles/JavaDictionaryInfo.plistKeys.html
+
+== Linux ==
+
+[] Generate DEB and RPM with a desktop icon
+   http://stackoverflow.com/questions/119031/how-to-set-my-applications-desktop-icon-for-linux-kde-gnome-etc
+
+[] Enable splash images
+
+== All ==
+
+[] More JSmooth properties
+   http://code.google.com/p/nicejump/source/browse/openjump-core/dist/installer/1.0/OpenJump.jsmooth
+   http://code.google.com/p/bluebrim/source/browse/trunk/SingleUserDesktopApp/jsmooth.xml
+ 
+[] Mavenization so we don't have to bundle the megajars
