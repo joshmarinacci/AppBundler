@@ -30,7 +30,7 @@ public class Util {
         }
         fin.close();
         fout.close();
-        p("m copied file: " + srcFile.getName());
+        p("copied file: " + srcFile.getName());
     }
 
     private static void p(String s) {
@@ -48,6 +48,6 @@ public class Util {
         }
         in.close();
         fout.close();
-        p("m copied jar: " + resource.toString());
+        p("copied jar: " + resource.toString());
     }
 }

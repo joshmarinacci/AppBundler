@@ -16,7 +16,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.HashSet;
 import java.util.Set;
@@ -138,7 +137,7 @@ public class OneJarBundler {
                     xml.end();
                 }
             }
-            for(File jar : lib.getJars()) {
+            for(File jar : lib.getCommonJars()) {
                 p("copying over native lib jar: " + jar.getName());
                 copyJar(jarOut, jar, writtenNames);
             }

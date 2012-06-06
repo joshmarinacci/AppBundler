@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
             
-<project default="help">
+<project default="help" basedir=".">
 
     <target name="help">
         <echo>ant build       just build it, already!</echo>
@@ -11,10 +11,13 @@
     
     <target name='build'>
         <mkdir dir="build/classes"/>
+        <mkdir dir="dist/lib"/>
+        
         <javac 
-            srcdir="src" 
-            classpath="lib/XMLLib.jar"
+            srcdir="src"  
+            classpath="${basedir}/lib/XMLLib.jar"
             destdir="build/classes"
+            debug="true"
             >
         </javac>
         <copy todir='build/classes'>
@@ -22,8 +25,15 @@
                 <include name='**/*.plist'/>
                 <include name='**/JavaApplicationStub'/>
                 <include name='**/*.txt'/>
+                <include name='**/resources/**'/>
             </fileset>
         </copy>
+        <jar destfile="dist/lib/BundlerTask.jar"
+          basedir="build/classes"/>
+    </target>
+
+    <target name="jar">
+        <jar destfile="dist/AppBundler.jar" basedir="build/classes"/>
     </target>
     
     <target name="clean">
