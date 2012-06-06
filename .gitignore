@@ -30,8 +30,3 @@ nb-configuration.xml
 Session.vim
 
 *.class
-
-# Package Files #
-*.jar
-*.war
-*.ear
