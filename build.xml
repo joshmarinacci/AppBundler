@@ -13,9 +13,11 @@
         <mkdir dir="build/classes"/>
         <mkdir dir="dist/lib"/>
         
+        <!-- mvn_classpath is set from maven-antrun-plugin -->
+        <!-- if you don't use it, please mosey along and act normally -->
         <javac 
             srcdir="src"  
-            classpath="${basedir}/lib/XMLLib.jar"
+            classpath="${basedir}/lib/XMLLib.jar:${mvn_classpath}"
             destdir="build/classes"
             debug="true"
             >
