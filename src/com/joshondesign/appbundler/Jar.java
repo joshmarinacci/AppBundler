@@ -13,7 +13,7 @@ import java.io.File;
  */
 public class Jar {
     private final String name;
-    private boolean main;
+    private boolean main=false;
     private String mainClass;
     private File file;
     private String os;

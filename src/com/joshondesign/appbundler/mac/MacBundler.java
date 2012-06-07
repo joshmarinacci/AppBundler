@@ -25,6 +25,8 @@ public class MacBundler {
     
     private static final String OSNAME = "mac";
 
+    // http://developer.apple.com/library/mac/#documentation/Java/Reference/Java_InfoplistRef/Articles/JavaDictionaryInfo.plistKeys.html
+
     public static void start(AppDescription app, String dest_dir) throws Exception {
         //create the dir structure
         File destDir = new File(dest_dir+"/"+OSNAME+"/");
@@ -37,9 +39,9 @@ public class MacBundler {
         File resourcesDir = new File(contentsDir, "Resources");
         resourcesDir.mkdir();
         File javadir = new File(resourcesDir,"Java");
+        File depdir = new File(javadir,"lib");
         javadir.mkdir();
-
-
+        depdir.mkdir();
 
         for(Jar jar : app.getJars()) {
             //p("processing jar = " + jar.getName() + " os = "+jar.getOS());
@@ -49,7 +51,13 @@ public class MacBundler {
                     continue;
                 }
             }
-            File jarFile = new File(javadir,jar.getName());
+
+            File jarFile;
+            if(jar.isMain()){
+              jarFile = new File(javadir,jar.getName());
+            } else {
+              jarFile = new File(depdir,jar.getName());
+            }
             Util.copyToFile(jar.getFile(), jarFile);
         }
 
@@ -68,6 +76,19 @@ public class MacBundler {
             }
         }
 
+        // copy splash image
+        String splashImage = app.getSplashImage();
+        if (null != splashImage) {
+            p("Using splash image: " + splashImage);
+            File splash = new File(splashImage);
+            File outSplash = new File(javadir,splash.getName());
+            p("out splash = " + outSplash.getAbsolutePath());
+            p("t = " + resourcesDir.getAbsolutePath());
+            p("t = " + resourcesDir.exists());
+            Bundler.copyStream(new FileInputStream(splash),new FileOutputStream(outSplash));
+        }
+
+
 
         for(String ext : app.getExtensions()) {
             String exticon = app.getExtensionIcon(ext);
@@ -80,10 +101,10 @@ public class MacBundler {
                     p("copied: " + ifile.getAbsolutePath());
                     p("   to:  " + outIcon.getAbsolutePath());
                 }
-                
+
             }
         }
-        
+
         //build the info plist
         processInfoPlist(app,contentsDir);
 
@@ -172,10 +193,21 @@ public class MacBundler {
         key(out,"MainClass",app.getMainClass());
         key(out,"JVMVersion","1.6+");
 
+        String splashImage = app.getSplashImage();
+        if (null != splashImage) {
+            File splash = new File(splashImage);
+            // See: http://lists.apple.com/archives/java-dev/2008/Jun/msg00012.html
+            key(out,"SplashFile","$JAVAROOT/"+splash.getName());
+        }
+
         out.start("key").text("ClassPath").end();
         out.start("array");
         for(Jar jar : app.getJars()) {
-            out.start("string").text("$JAVAROOT/"+jar.getName()).end();
+            if(jar.isMain()) {
+                out.start("string").text("$JAVAROOT/"+jar.getName()).end();
+            } else {
+                out.start("string").text("$JAVAROOT/lib/"+jar.getName()).end();
+            }
         }
         for(NativeLib lib : app.getNativeLibs()) {
             p("native lib: " + lib.getName());
@@ -201,7 +233,7 @@ public class MacBundler {
         out.end();//dict
 
         out.end();//dict
-        
+
         out.end().end(); //dict, plist
         out.close();
     }

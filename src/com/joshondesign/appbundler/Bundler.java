@@ -58,11 +58,11 @@ public class Bundler {
         p("using descriptor = " + DESCRIPTOR);
         File descriptor = new File(DESCRIPTOR);
         if(!descriptor.exists()) throw new Error("Descriptor file: " + DESCRIPTOR + " does not exist");
-        
+
         runit(descriptor,jardirs, target, DEST_DIR, null);
 
     }
-    
+
     public static void runit(File descriptor, List<String> jardirs,
             String target,
             String DEST_DIR,
@@ -107,7 +107,7 @@ public class Bundler {
             WindowsBundler.start(app,DEST_DIR);
             return;
         }
-        
+
         p("ERROR: unrecognized target: " + target);
     }
 
@@ -120,6 +120,7 @@ public class Bundler {
     private static AppDescription parseDescriptor(File descriptor) throws Exception {
 
         AppDescription app = new AppDescription();
+        Boolean isDep;
         Doc doc = XMLParser.parse(descriptor);
         app.setName(doc.xpathString("/app/@name"));
         for(Elem jarElem : doc.xpath("/app/jar")) {
@@ -137,8 +138,13 @@ public class Bundler {
             app.addExtension(extElem.attr("extension"),extElem.attr("mimetype"),extElem.attr("icon"));
         }
         for(Elem iconE : doc.xpath("/app/icon")) {
-            System.out.println("got an icon: " + iconE.attr("name"));
-            app.addIcon(iconE.attr("name"));
+            if (!iconE.attr("kind").equalsIgnoreCase("splash")) {
+                System.out.println("got an icon: " + iconE.attr("name"));
+                app.addIcon(iconE.attr("name"));
+            } else {
+                System.out.println("got splash image: " + iconE.attr("name"));
+                app.setSplashImage(iconE.attr("name"));
+            }
         }
 
         for(Elem nativeE : doc.xpath("/app/native")) {

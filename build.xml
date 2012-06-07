@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
             
-<project default="help">
+<project default="help" basedir=".">
 
     <target name="help">
         <echo>ant build       just build it, already!</echo>
@@ -11,9 +11,13 @@
     
     <target name='build'>
         <mkdir dir="build/classes"/>
+        <mkdir dir="dist/lib"/>
+        
+        <!-- mvn_classpath is set from maven-antrun-plugin -->
+        <!-- if you don't use it, please mosey along and act normally -->
         <javac 
-            srcdir="src" 
-            classpath="lib/XMLLib.jar"
+            srcdir="src"  
+            classpath="${basedir}/lib/XMLLib.jar:${mvn_classpath}"
             destdir="build/classes"
             debug="true"
             >
@@ -26,6 +30,8 @@
                 <include name='**/resources/**'/>
             </fileset>
         </copy>
+        <jar destfile="dist/lib/BundlerTask.jar"
+          basedir="build/classes"/>
     </target>
 
     <target name="jar">

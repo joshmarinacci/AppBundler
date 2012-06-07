@@ -23,6 +23,7 @@ public class AppDescription {
     private final ArrayList<String> appIcons;
     private List<NativeLib> natives;
     private List<Prop> props;
+    private String splashImage;
 
     public AppDescription() {
         jars = new ArrayList<Jar>();
@@ -87,13 +88,21 @@ public class AppDescription {
     public Iterable<NativeLib> getNativeLibs() {
         return natives;
     }
-    
+
     void addProp(Prop prop) {
         props.add(prop);
     }
-    
+
     public Iterable<Prop> getProps() {
         return props;
+    }
+
+    public String getSplashImage() {
+        return splashImage;
+    }
+
+    void setSplashImage(String img) {
+        this.splashImage = img;
     }
 
 }
