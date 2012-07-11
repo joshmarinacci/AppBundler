@@ -69,6 +69,17 @@ public class WindowsBundler {
         Util.copyToFile(WindowsBundler.class.getResource("resources/skeletons/autodownload-wrapper/customdownload.skel"),
                 new File(wrapperDir,"customdownload.skel"));
 
+        //copy the icons (jsmooth doesn't support .ico files)
+        for(String iconS : app.getAppIcons()) {
+            if(iconS.toLowerCase().endsWith(".png")) {
+                p("Using icon: " + iconS);
+                File icon = new File(iconS);
+                File outIcon = new File(tempdir,"icon.png");
+                Util.copyToFile(icon, outIcon);
+                break;
+            }
+        }
+
         //invoke jsmooth in a temp dir
         String[]command = new String[]{
             "java"
@@ -103,6 +114,7 @@ public class WindowsBundler {
 
         processNatives(libDir, app);
     }
+
     private static void processNatives(File javaDir, AppDescription app) throws IOException {
         //track the list of files in the appbundler_tasks.xml
         for(NativeLib lib : app.getNativeLibs()) {
@@ -151,6 +163,13 @@ public class WindowsBundler {
         }
         xml.start("embeddedJar").text("false").end();
         xml.start("executableName").text(app.getName()+".exe").end();
+
+        for(String iconS : app.getAppIcons()) {
+            if(iconS.toLowerCase().endsWith(".png")) {
+                xml.start("iconLocation").text("icon.png").end();
+                break;
+            }
+        }
 
 
         xml.start("javaProperties")
