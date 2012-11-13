@@ -28,7 +28,7 @@
         </copy>
     </target>
 
-    <target name="jar">
+    <target name="jar" depends="build">
         <jar destfile="dist/AppBundler.jar" basedir="build/classes"/>
     </target>
     
@@ -61,6 +61,20 @@
             <arg value="--jardir=build/jars/"/>
             <arg value="--jardir=lib/"/>
         </java>
+    </target>
+    
+    <target name="test-windows" depends="build, build-testapp">
+        <mkdir dir='dist'/>
+        <mkdir dir='dist/win'/>
+        <java
+            classpath="build/classes;lib/XMLLib.jar"
+            classname="com.joshondesign.appbundler.Bundler" fork="true">
+            <arg value="--file=test/bundle.xml"/>
+            <arg value="--target=win"/>
+            <arg value="--outdir=dist/win"/>
+            <arg value="--jardir=build/jars/"/>
+            <arg value="--jardir=lib/"/>
+        </java>        
     </target>
     
     <target name='test-anttask' depends='build, build-testapp'>
