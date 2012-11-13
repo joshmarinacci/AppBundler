@@ -74,7 +74,7 @@ public class WindowsBundler {
             "java"
             ,"-Djsmooth.basedir="+tempdir.getAbsolutePath()
             ,"-cp"
-            ,smoothGenJar.getAbsolutePath()+":"+jox116Jar.getAbsolutePath()
+            ,smoothGenJar.getAbsolutePath()+File.pathSeparator+jox116Jar.getAbsolutePath()
             ,"net.charabia.jsmoothgen.application.cmdline.CommandLine"
             ,projectFile.getAbsolutePath()
         };
@@ -130,13 +130,10 @@ public class WindowsBundler {
     private static void generateProjectFile(XMLWriter xml, AppDescription app) throws Exception {
         xml.header();
         xml.start("jsmoothproject");
-        xml.start("JVMSearchPath").text("registry").end();
-        xml.start("JVMSearchPath").text("javahome").end();
-        xml.start("JVMSearchPath").text("jrepath").end();
-        xml.start("JVMSearchPath").text("jdkpath").end();
-        xml.start("JVMSearchPath").text("exepath").end();
-        xml.start("JVMSearchPath").text("jview").end();
+        xml.start("JVMSearchPath").text("bundled").end();
         xml.start("arguments").end();
+        xml.start("bundledJVMPath").text("jre").end();
+        xml.start("currentDirectory").text("${EXECUTABLEPATH}").end();//</currentDirectory>\n")
 
         for(Jar jar : app.getJars()) {
             xml.start("classPath").text("lib\\"+jar.getName()).end();
@@ -171,12 +168,11 @@ public class WindowsBundler {
         xml.start("skeletonName").text("Autodownload Wrapper").end();
 
         Map<String,String> skeletonProperties = new HashMap<String, String>();
-        skeletonProperties.put("Message", "Java has not been found on your computer. Do you want to download it?");
-        skeletonProperties.put("DownloadURL","http://java.sun.com/update/1.6.0/jinstall-6-windows-i586.cab");
         skeletonProperties.put("SingleProcess","1");
         skeletonProperties.put("SingleInstance","0");
         skeletonProperties.put("JniSmooth","0");
-        skeletonProperties.put("Debug","0");
+        skeletonProperties.put("Debug","1");
+        skeletonProperties.put("PressKey","1");
         for(String key : skeletonProperties.keySet()) {
             xml.start("skeletonProperties");
             xml.start("key").text(key).end();
@@ -197,7 +193,7 @@ public class WindowsBundler {
             p("    "+s);
         }
         Process proc = Runtime.getRuntime().exec(command);
-        InputStream stdout = proc.getInputStream();
+        InputStream stdout = proc.getErrorStream();
         byte[] buf = new byte[1024*16];
         while(true) {
             int n = stdout.read(buf);
